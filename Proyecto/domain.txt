@@ -1,0 +1,97 @@
+(define (domain luggage-transport-hotel)
+  (:requirements :strips  :negative-preconditions :typing :equality)
+
+  ;; Type definition
+  (:types location robot large-suitcase small-suitcase)
+
+  ;; Predicate definition
+  (:predicates
+    (large-suitcase-at-location ?g - large-suitcase ?l - location)
+    (small-suitcase-at-location ?p - small-suitcase ?l - location)
+    (robot-at-location ?r - robot ?l - location)
+    (robot-has-large-suitcase ?r - robot ?g - large-suitcase)
+    (robot-has-small-suitcase ?r - robot ?p - small-suitcase)
+    (small-suitcase-occupied ?r - robot)
+    (large-suitcase-occupied ?r - robot)
+  )
+
+  ;; Action definition
+  (:action move-robot
+    :parameters (?r - robot ?origin - location ?destination - location)
+    :precondition (and 
+                    (robot-at-location ?r ?origin)
+                    (not (= ?origin ?destination))
+                   )
+    :effect (and 
+              (not (robot-at-location ?r ?origin))
+              (robot-at-location ?r ?destination)
+            )
+  )
+
+  (:action pick-up-small-suitcase
+    :parameters (?r - robot ?m - small-suitcase ?origin - location)
+    :precondition (and 
+                    (robot-at-location ?r ?origin)
+                    (small-suitcase-at-location ?m ?origin)
+                    (not(robot-has-small-suitcase ?r ?m))
+                    (large-suitcase-occupied ?r)
+                    (not (small-suitcase-occupied ?r))
+                   )
+    :effect (and 
+              (not (small-suitcase-at-location ?m ?origin))
+              (robot-has-small-suitcase ?r ?m)
+              (small-suitcase-occupied ?r)
+            )
+  )
+
+  (:action pick-up-large-suitcase
+    :parameters (?r - robot ?m - large-suitcase  ?origin - location)
+    :precondition (and 
+                    (not(small-suitcase-occupied ?r))
+                    (robot-at-location ?r ?origin)
+                    (large-suitcase-at-location ?m ?origin)
+                    (not (large-suitcase-occupied ?r))
+               
+                   )
+    :effect (and 
+              (not (large-suitcase-at-location ?m ?origin))
+               (large-suitcase-occupied ?r)
+              (robot-has-large-suitcase ?r ?m)
+            )
+  )
+
+  (:action drop-large-suitcase
+    :parameters (?r - robot ?m - large-suitcase ?destination - location)
+    :precondition (and 
+                    (robot-has-large-suitcase ?r ?m)
+                    (robot-at-location ?r ?destination)
+                    (not (large-suitcase-at-location ?m ?destination))
+                    (large-suitcase-occupied ?r)
+                    (not (small-suitcase-occupied ?r))
+                   )
+    :effect (and 
+              (large-suitcase-at-location ?m ?destination)
+              (not(robot-has-large-suitcase ?r ?m))
+            
+               (not (large-suitcase-occupied ?r))
+            )
+  )
+  
+  (:action drop-small-suitcase
+    :parameters (?r - robot ?m - small-suitcase ?destination - location)
+    :precondition (and 
+                    (robot-has-small-suitcase ?r ?m)
+                    (robot-at-location ?r ?destination)
+                    (not (small-suitcase-at-location ?m ?destination))
+                   
+                    (small-suitcase-occupied ?r)
+                     (large-suitcase-occupied ?r)
+                   )
+    :effect (and 
+              (small-suitcase-at-location ?m ?destination)
+              (not(robot-has-small-suitcase ?r ?m))
+            (not (small-suitcase-occupied ?r))
+            )
+  )
+
+)

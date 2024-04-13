@@ -1,0 +1,35 @@
+(define (problem luggage-transport-hotel-problem)
+  (:domain luggage-transport-hotel)
+
+  ;; Object definition
+  (:objects 
+     suitcase2 suitcase4 suitcase6 - small-suitcase
+     suitcase1 suitcase3 suitcase5 - large-suitcase
+     hall room101 room102 room103 storage - location
+     robot1 - robot
+  )
+
+  ;; Initial state definition
+  (:init
+    (large-suitcase-at-location suitcase1 hall)
+    (small-suitcase-at-location suitcase2 hall)
+    (large-suitcase-at-location suitcase3 hall)
+    (small-suitcase-at-location suitcase4 hall)
+    (large-suitcase-at-location suitcase5 room103)
+    (small-suitcase-at-location suitcase6 room103)
+    (robot-at-location robot1 hall)
+  )
+
+  ;; Goal definition
+  (:goal (and
+           
+            (large-suitcase-at-location suitcase1 room101)
+            (small-suitcase-at-location suitcase2 room101)
+            (large-suitcase-at-location suitcase3 room102)
+            (small-suitcase-at-location suitcase4 room102)
+            (large-suitcase-at-location suitcase5 storage)
+            (small-suitcase-at-location suitcase6 storage)
+          )
+  )
+)
+
